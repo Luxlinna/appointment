@@ -54,7 +54,7 @@ export default function Dashboard() {
         status: 'Canceled',
       });
       alert('Appointment canceled');
-    } catch (err) {
+    } catch {
       alert('Failed to cancel appointment');
     }
   };
@@ -63,7 +63,7 @@ export default function Dashboard() {
     try {
       await deleteDoc(doc(db, 'appointments', id));
       alert('Appointment deleted');
-    } catch (err) {
+    } catch {
       alert('Failed to delete appointment');
     }
   };
@@ -82,7 +82,7 @@ export default function Dashboard() {
       });
       setShowEditModal(false);
       setSelectedAppointment(null);
-    } catch (err) {
+    } catch {
       alert('Failed to update appointment');
     }
   };

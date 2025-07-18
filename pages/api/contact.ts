@@ -56,8 +56,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await transporter.sendMail(thankYouMail);
 
     return res.status(200).json({ message: "Emails sent!" });
-  } catch (error) {
-    console.error("Email error:", error);
+  } catch  {
+    console.error("Email error:");
     return res.status(500).json({ error: "Email failed to send." });
   }
 }

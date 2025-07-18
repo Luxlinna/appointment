@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 type Doctor = {
   name: string;
@@ -81,11 +82,15 @@ const Doctors: React.FC = () => {
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.6 }}
           >
-            <img
+            <Image
               src={doctors[index].image}
               alt={doctors[index].name}
-              className="w-32 h-32 mx-auto rounded-full object-cover border-4 border-blue-100 mb-4"
+              width={128}
+              height={128}
+              className="mx-auto rounded-full object-cover border-4 border-blue-100 mb-4"
             />
+
+
             <h3 className="text-xl font-semibold">{doctors[index].name}</h3>
             <p className="text-blue-600 mb-2">{doctors[index].specialty}</p>
             <p className="text-gray-600 text-sm mb-1">
