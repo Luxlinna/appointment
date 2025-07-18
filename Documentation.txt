@@ -1,0 +1,166 @@
+Create Project:
+- npx create-next-app@latest booking --typescript
+- cd booking
+- npm install tailwindcss postcss autoprefixer
+- npx tailwindcss init -p
+
+- npm install express cors dotenv jsonwebtoken bcryptjs prisma          // Install Backend Dependencies
+- npx prisma init           // Prisma ORM for database management
+
+Next steps:
+1. Set the DATABASE_URL in the .env file to point to your existing database. If your database has no tables yet, read https://pris.ly/d/getting-started
+2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb.
+3. Run prisma db pull to turn your database schema into a Prisma schema.
+4. Run prisma generate to generate the Prisma Client. You can then start querying your database.
+5. Tip: Explore how you can extend the ORM with scalable connection pooling, global caching, and real-time database events. Read: https://pris.ly/cli/beyond-orm
+
+More information in our documentation:
+https://pris.ly/d/getting-started
+
+
+
+Connect PostgreSQL:
+- psql -U postgres -d coworkingdb
+- ALTER SCHEMA public OWNER TO linna;
+- GRANT ALL PRIVILEGES ON SCHEMA public TO linna;
+- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO linna;
+- npx prisma migrate dev --name init
+
+
+// ===============
+luxlinna@MacBookAir booking % npx prisma migrate dev --name init
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "coworkingdb", schema "public" at "localhost:5432"
+
+Applying migration `20250401121528_init`
+
+The following migration(s) have been created and applied from new schema changes:
+
+migrations/
+  └─ 20250401121528_init/
+    └─ migration.sql
+
+Your database is now in sync with your schema.
+
+Running generate... (Use --skip-generate to skip the generators)
+
+✔ Generated Prisma Client (v6.5.0) to ./node_modules/@prisma/client in 256ms
+// =====================
+- \q   // Quite database
+
+
+REACT HOT TOAST TO SHOW Notifications
+- npm install react-hot-toast
+- import { ToastContainer, toast } from 'react-hot-toast';
+- npm install react-toastify
+
+
+Animation:
+- npm install framer-motion
+- npm install lucide-react
+- npm install react-icons
+- npm install react-hot-toast
+
+
+// ===============
+Send Email to Client and store in database of Firebase by using Mailchimp
+- npm install nodemailer
+
+// ===============
+Update for run document of booking with client like PDF generate
+- npm install date-fns
+- npm install jspdf jspdf-autotable
+
+
+
+
+
+
+
+
+
+Firbase Firestore:
+- npm install firebase
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCU8Ah5MQMjId5OH61yzpMX9H3SDVnWoX8",
+  authDomain: "coworkingdb-5f036.firebaseapp.com",
+  projectId: "coworkingdb-5f036",
+  storageBucket: "coworkingdb-5f036.firebasestorage.app",
+  messagingSenderId: "181236012316",
+  appId: "1:181236012316:web:09927dc74932f864b0d6d9",
+  measurementId: "G-GT8K7XGY15"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+
+// Fire Database Rule:
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+// For test :
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if
+          request.time < timestamp.date(2025, 5, 3);
+    }
+  }
+}
+
+
+
+
+
+
+
+
+/booking
+│── /pages
+│   │── /api
+│   │   │── /auth
+│   │   │   │── login.ts
+│   │   │   │── register.ts
+│   │   │── /rooms
+│   │   │   │── index.ts  (GET all rooms, POST new room)
+│   │   │   │── [id].ts  (PUT, DELETE room)
+│   │   │── /bookings
+│   │   │   │── index.ts  (GET, POST bookings)
+│   │   │   │── [id].ts  (PUT, DELETE booking)
+│   │   │── /notifications.ts (GET, POST notifications)
+│   │   │── socket.ts (WebSocket server)
+│── /components
+│   │── BookingForm.tsx
+│   │── Notifications.tsx
+│   │── RoomList.tsx
+│── /lib
+│   │── db.ts (PostgreSQL connection)
+│── /context
+│   │── AuthContext.tsx (Handles authentication)
+│── /styles
+│   │── globals.css (Tailwind styles)
+│── .env.local (Database credentials, JWT secret)
+│── package.json
+│── tsconfig.json
+│── next.config.js
+│── README.md

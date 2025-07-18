@@ -1,0 +1,100 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /your_collection/{docId} {
+      allow read: if true; // just for testing, make sure to restrict this later
+    }
+  }
+}
+
+
+==========================
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Replace with your actual admin UID
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == "abc123YOURADMINUID";
+    }
+
+    // ROLES: only the one admin can create/update roles
+    match /roles/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if isAdmin();
+    }
+
+    // USERS: users can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // APPOINTMENTS: admin sees everything
+    match /appointments/{appointmentId} {
+      allow read: if isAdmin(); // Only admin can see appointments
+      allow write: if isAdmin(); // Only admin can create/edit/delete appointments
+    }
+
+    // SERVICES: anyone can read, only admin can write
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Catch-all fallback
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+====================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "ADMIN";
+    }
+
+    // USERS: users can access their own document
+    match /roles/{userId} {
+  	allow read: if request.auth != null && request.auth.uid == userId;
+
+  	allow write: if request.auth != null &&
+               request.auth.uid == userId &&
+               !(request.resource.data.role in ["ADMIN"]) &&
+               request.resource.data.role in ["DOCTOR"];
+		} 
+
+    // ROLES: users can read/write their own role, but can't assign themselves as ADMIN
+    match /roles/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      allow write: if request.auth != null &&
+                   request.auth.uid == userId &&
+                   !(request.resource.data.role in ["ADMIN"]);
+    }  
+
+    // APPOINTMENTS: allow admin or assigned doctor
+    match /appointments/{appointmentId} {
+      allow get, list: if request.auth != null &&
+                       (isAdmin() || resource.data.doctorId == request.auth.uid);
+
+      allow create, update, delete: if request.auth != null &&
+                                     (isAdmin() || request.resource.data.doctorId == request.auth.uid);
+    }
+
+    // SERVICES: read for all, write only for admin
+    match /services/{serviceId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null && isAdmin();
+    }
+
+    // Catch-all fallback
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
